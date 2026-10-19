@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affinity Education - Executive CRM Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#002B49',
+                            900: '#001E34',
+                        },
+                        teal: {
+                            500: '#00A896',
+                            600: '#008E7E',
+                        },
+                        slateBg: '#F4F7F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F4F7F6; font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .tab-active { background-color: #00A896 !important; color: white !important; }
+        @media print {
+            body * { visibility: hidden; }
+            #printableInvoice, #printableInvoice * { visibility: visible; }
+            #printableInvoice { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased flex flex-col min-h-screen">
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="bg-navy-800 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center font-bold text-xl text-white shadow-md">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-wide block leading-tight">AFFINITY</span>
+                        <span class="text-xs text-teal-500 font-medium tracking-widest block uppercase">Education CRM</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav Links -->
+                <div class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-900 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-pie text-teal-500"></i><span>Dashboard</span>
+                    </button>
+                    <button onclick="switchTab('leads')" id="nav-leads" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-900 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-user-plus text-teal-500"></i><span>Leads</span>
+                    </button>
+                    <button onclick="switchTab('pipeline')" id="nav-pipeline" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-900 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-diagram-project text-teal-500"></i><span>Pipeline</span>
+                    </button>
+                    <button onclick="switchTab('agentic')" id="nav-agentic" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-900 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-robot text-teal-500"></i><span>Agentic AI</span>
+                    </button>
+                    <button onclick="switchTab('quotations')" id="nav-quotations" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-900 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-teal-500"></i><span>Quotations</span>
+                    </button>
+                    <button onclick="switchTab('tasks')" id="nav-tasks" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-900 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-list-check text-teal-500"></i><span>Tasks</span>
+                    </button>
+                </div>
+
+                <!-- User Profile & Notifications -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="text-gray-300 hover:text-white relative p-1">
+                            <i class="fa-solid fa-bell text-lg"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-teal-500 rounded-full"></span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-3 border-l border-gray-700 pl-4">
+                        <img class="h-9 w-9 rounded-full ring-2 ring-teal-500 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256" alt="Profile">
+                        <div class="hidden sm:block text-left">
+                            <p class="text-sm font-semibold leading-none">Priya Sharma</p>
+                            <p class="text-xs text-gray-400 mt-1 leading-none">Senior Counselor</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Bar -->
+        <div class="md:hidden flex justify-around bg-navy-900 py-2 border-t border-gray-800 text-xs overflow-x-auto">
+            <button onclick="switchTab('dashboard')" class="p-2 text-center text-gray-300 flex flex-col items-center"><i class="fa-solid fa-chart-pie mb-1"></i>Home</button>
+            <button onclick="switchTab('leads')" class="p-2 text-center text-gray-300 flex flex-col items-center"><i class="fa-solid fa-user-plus mb-1"></i>Leads</button>
+            <button onclick="switchTab('pipeline')" class="p-2 text-center text-gray-300 flex flex-col items-center"><i class="fa-solid fa-diagram-project mb-1"></i>Pipeline</button>
+            <button onclick="switchTab('agentic')" class="p-2 text-center text-gray-300 flex flex-col items-center"><i class="fa-solid fa-robot mb-1"></i>AI Routing</button>
+            <button onclick="switchTab('quotations')" class="p-2 text-center text-gray-300 flex flex-col items-center"><i class="fa-solid fa-file-invoice-dollar mb-1"></i>Invoice</button>
+            <button onclick="switchTab('tasks')" class="p-2 text-center text-gray-300 flex flex-col items-center"><i class="fa-solid fa-list-check mb-1"></i>Tasks</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- ALERT / BANNER -->
+        <div id="statusToast" class="hidden mb-6 bg-teal-500 text-white px-4 py-3 rounded-lg shadow-md flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-circle-check text-xl"></i>
+                <span id="toastMessage" class="text-sm font-medium">Operation completed successfully.</span>
+            </div>
+            <button onclick="hideToast()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- SECTION 1: DASHBOARD -->
+        <section id="section-dashboard" class="tab-content space-y-6">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-navy-800">Executive Overview</h1>
+                    <p class="text-sm text-gray-600">Real-time overseas student acquisition & performance metrics.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-600 shadow-sm flex items-center">
+                        <i class="fa-solid fa-calendar text-teal-500 mr-2"></i> Academic Year 2026 - 2027
+                    </span>
+                    <button onclick="switchTab('leads')" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition flex items-center">
+                        <i class="fa-solid fa-plus mr-2"></i> Add Student Lead
+                    </button>
+                </div>
+            </div>
+
+            <!-- Key Metrics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Leads</p>
+                            <h3 class="text-2xl font-bold text-navy-800 mt-1">1,428</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-green-600 font-medium mt-3 flex items-center">
+                        <i class="fa-solid fa-arrow-trend-up mr-1"></i> +14.2% from last month
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Active Applications</p>
+                            <h3 class="text-2xl font-bold text-navy-800 mt-1">384</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-passport"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-green-600 font-medium mt-3 flex items-center">
+                        <i class="fa-solid fa-arrow-trend-up mr-1"></i> +8.6% active counseling
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Revenue / Fees</p>
+                            <h3 class="text-2xl font-bold text-navy-800 mt-1">₹42.8 Lakh</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-green-600 font-medium mt-3 flex items-center">
+                        <i class="fa-solid fa-arrow-trend-up mr-1"></i> +22% vs Q3 target
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Conversion Rate</p>
+                            <h3 class="text-2xl font-bold text-navy-800 mt-1">26.8%</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-purple-600 font-medium mt-3 flex items-center">
+                        <i class="fa-solid fa-bolt mr-1"></i> Agentic AI boosted +4.1%
+                    </p>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Bar Chart -->
+                <div class="lg:col-span-2 bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-navy-800">Lead Conversion & Enrollment Trend</h3>
+                        <span class="text-xs text-gray-500">Monthly breakdown 2026</span>
+                    </div>
+                    <div class="h-64 relative">
+                        <canvas id="leadsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut Chart -->
+                <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-base font-bold text-navy-800">Top Destination Countries</h3>
+                        <span class="text-xs text-gray-500">By Lead Volume</span>
+                    </div>
+                    <div class="h-64 relative flex items-center justify-center">
+                        <canvas id="destinationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Feed -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+                <h3 class="text-base font-bold text-navy-800 mb-4">Recent System & Counselor Activity</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3 text-sm pb-3 border-b border-gray-100">
+                        <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-800"><span class="font-semibold text-navy-800">Agentic AI Engine</span> routed lead <span class="font-semibold">Rahul Verma (MBBS Russia)</span> to Senior Counselor Dr. Ananya.</p>
+                            <span class="text-xs text-gray-400">2 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 text-sm pb-3 border-b border-gray-100">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-file-invoice"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-800"><span class="font-semibold text-navy-800">Invoice Generated</span> #INV-2026-882 for <span class="font-semibold">Sneha Kapoor (UK Masters)</span> - Amount ₹1,50,000.</p>
+                            <span class="text-xs text-gray-400">18 minutes ago</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <i class="fa-solid fa-check-circle"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-800"><span class="font-semibold text-navy-800">Visa Status Updated</span> to <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-xs font-semibold">Approved</span> for Amit Patel (Georgia).</p>
+                            <span class="text-xs text-gray-400">1 hour ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: LEADS MANAGEMENT -->
+        <section id="section-leads" class="tab-content space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-navy-800">Student Lead Management</h1>
+                    <p class="text-sm text-gray-600">Track, filter, and assign incoming student inquiries.</p>
+                </div>
+                <button onclick="openLeadModal()" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition flex items-center self-start">
+                    <i class="fa-solid fa-user-plus mr-2"></i> Add New Lead
+                </button>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+                <div class="relative w-full md:w-96">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" id="leadSearchInput" onkeyup="filterLeadsTable()" placeholder="Search by name, phone, or country..." class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
+                </div>
+                <div class="flex items-center space-x-3 w-full md:w-auto overflow-x-auto">
+                    <select id="leadStatusFilter" onchange="filterLeadsTable()" class="border border-gray-200 rounded-lg text-sm px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="ALL">All Statuses</option>
+                        <option value="New Inquiry">New Inquiry</option>
+                        <option value="Counseling">Counseling</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Enrolled">Enrolled</option>
+                    </select>
+                    <select id="leadSourceFilter" onchange="filterLeadsTable()" class="border border-gray-200 rounded-lg text-sm px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <option value="ALL">All Sources</option>
+                        <option value="Meta Ads">Meta Ads</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                        <option value="Web Form">Web Form</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-x-auto">
+                <table class="w-full text-left border-collapse" id="leadsTable">
+                    <thead>
+                        <tr class="bg-navy-800 text-white text-xs uppercase tracking-wider">
+                            <th class="py-3.5 px-4 font-semibold">Student Name</th>
+                            <th class="py-3.5 px-4 font-semibold">Contact Details</th>
+                            <th class="py-3.5 px-4 font-semibold">Target Destination</th>
+                            <th class="py-3.5 px-4 font-semibold">Source</th>
+                            <th class="py-3.5 px-4 font-semibold">Assigned Counselor</th>
+                            <th class="py-3.5 px-4 font-semibold">Status</th>
+                            <th class="py-3.5 px-4 font-semibold text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 text-sm" id="leadsTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 3: DEAL PIPELINE (KANBAN) -->
+        <section id="section-pipeline" class="tab-content space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-navy-800">Student Sales Pipeline</h1>
+                    <p class="text-sm text-gray-600">Visual progress tracking from initial inquiry to enrollment.</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs text-gray-500 bg-gray-200 px-3 py-1 rounded-full"><i class="fa-solid fa-info-circle mr-1"></i> Interactive Kanban</span>
+                </div>
+            </div>
+
+            <!-- Kanban Columns Container -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 overflow-x-auto pb-4 custom-scrollbar">
+                
+                <!-- Stage 1 -->
+                <div class="bg-gray-100/80 rounded-xl p-3 flex flex-col min-w-[240px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-200 mb-3">
+                        <span class="font-bold text-xs uppercase tracking-wide text-navy-800">1. Inquiry</span>
+                        <span class="bg-blue-200 text-blue-800 text-xs px-2 py-0.5 rounded-full font-bold" id="count-inquiry">0</span>
+                    </div>
+                    <div id="col-Inquiry" class="space-y-3 flex-1 min-h-[400px]"></div>
+                </div>
+
+                <!-- Stage 2 -->
+                <div class="bg-gray-100/80 rounded-xl p-3 flex flex-col min-w-[240px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-200 mb-3">
+                        <span class="font-bold text-xs uppercase tracking-wide text-navy-800">2. Counseling</span>
+                        <span class="bg-amber-200 text-amber-800 text-xs px-2 py-0.5 rounded-full font-bold" id="count-counseling">0</span>
+                    </div>
+                    <div id="col-Counseling" class="space-y-3 flex-1 min-h-[400px]"></div>
+                </div>
+
+                <!-- Stage 3 -->
+                <div class="bg-gray-100/80 rounded-xl p-3 flex flex-col min-w-[240px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-200 mb-3">
+                        <span class="font-bold text-xs uppercase tracking-wide text-navy-800">3. Application</span>
+                        <span class="bg-purple-200 text-purple-800 text-xs px-2 py-0.5 rounded-full font-bold" id="count-application">0</span>
+                    </div>
+                    <div id="col-Application" class="space-y-3 flex-1 min-h-[400px]"></div>
+                </div>
+
+                <!-- Stage 4 -->
+                <div class="bg-gray-100/80 rounded-xl p-3 flex flex-col min-w-[240px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-200 mb-3">
+                        <span class="font-bold text-xs uppercase tracking-wide text-navy-800">4. Doc Verified</span>
+                        <span class="bg-indigo-200 text-indigo-800 text-xs px-2 py-0.5 rounded-full font-bold" id="count-docs">0</span>
+                    </div>
+                    <div id="col-Docs" class="space-y-3 flex-1 min-h-[400px]"></div>
+                </div>
+
+                <!-- Stage 5 -->
+                <div class="bg-gray-100/80 rounded-xl p-3 flex flex-col min-w-[240px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-200 mb-3">
+                        <span class="font-bold text-xs uppercase tracking-wide text-navy-800">5. Visa Process</span>
+                        <span class="bg-orange-200 text-orange-800 text-xs px-2 py-0.5 rounded-full font-bold" id="count-visa">0</span>
+                    </div>
+                    <div id="col-Visa" class="space-y-3 flex-1 min-h-[400px]"></div>
+                </div>
+
+                <!-- Stage 6 -->
+                <div class="bg-gray-100/80 rounded-xl p-3 flex flex-col min-w-[240px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-200 mb-3">
+                        <span class="font-bold text-xs uppercase tracking-wide text-navy-800">6. Enrolled</span>
+                        <span class="bg-emerald-200 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold" id="count-enrolled">0</span>
+                    </div>
+                    <div id="col-Enrolled" class="space-y-3 flex-1 min-h-[400px]"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 4: AGENTIC AUTOMATION -->
+        <section id="section-agentic" class="tab-content space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-navy-800">Agentic AI Lead Routing & Auto-Followups</h1>
+                    <p class="text-sm text-gray-600">Simulate real-time lead ingestion, AI country assignment, and automated communications.</p>
+                </div>
+                <span class="bg-navy-800 text-teal-400 px-3 py-1 rounded-full text-xs font-semibold flex items-center self-start">
+                    <i class="fa-solid fa-shield-halved mr-1.5"></i> Affinity AI Engine Active
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Simulation Ingestion Card -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
+                    <div class="flex items-center space-x-3 pb-3 border-b border-gray-100">
+                        <div class="w-10 h-10 bg-teal-100 text-teal-600 rounded-lg flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-flask"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-navy-800">Simulate Incoming Student Lead</h3>
+                            <p class="text-xs text-gray-500">Test AI classification rules & counselor match</p>
+                        </div>
+                    </div>
+
+                    <form id="agenticForm" onsubmit="runAgenticSimulation(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Student Full Name</label>
+                            <input type="text" id="aiStudentName" required placeholder="e.g. Vikramaditya Singh" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Phone / WhatsApp</label>
+                                <input type="text" id="aiStudentPhone" required placeholder="+91 98765 43210" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Target Country/Course</label>
+                                <select id="aiStudentDestination" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                    <option value="MBBS Russia">MBBS Russia</option>
+                                    <option value="UK Masters">UK Masters</option>
+                                    <option value="Georgia Medical">Georgia Medical</option>
+                                    <option value="Canada Undergraduate">Canada Undergraduate</option>
+                                    <option value="Kazakhstan MBBS">Kazakhstan MBBS</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Inquiry Channel</label>
+                            <select id="aiStudentChannel" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                <option value="Meta Ads">Meta Facebook/Instagram Ad</option>
+                                <option value="WhatsApp Direct">WhatsApp Direct Chat</option>
+                                <option value="Web Form">Affinity Website Form</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full bg-navy-800 hover:bg-navy-900 text-white font-medium py-2.5 rounded-lg text-sm shadow transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-bolt text-teal-400"></i>
+                            <span>Trigger Agentic AI Processing</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- AI Execution Logs -->
+                <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-microchip"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-navy-800">AI Logic Execution Log</h3>
+                                <p class="text-xs text-gray-500">Autonomous workflow breakdown</p>
+                            </div>
+                        </div>
+                        <span class="animate-pulse flex h-3 w-3 relative">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-3 w-3 bg-teal-500"></span>
+                        </span>
+                    </div>
+
+                    <div id="aiLogOutput" class="bg-navy-900 text-green-400 font-mono text-xs p-4 rounded-lg flex-1 min-h-[260px] overflow-y-auto space-y-2">
+                        <p class="text-gray-400">// Ready to process new incoming leads...</p>
+                        <p class="text-gray-400">// Select parameters and click 'Trigger Agentic AI Processing' above.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: QUOTATIONS & INVOICING -->
+        <section id="section-quotations" class="tab-content space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-navy-800">Fee Quotation & Invoice Generator</h1>
+                    <p class="text-sm text-gray-600">GST-compliant tuition and consultancy billing generator.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="window.print()" class="bg-navy-800 hover:bg-navy-900 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition flex items-center">
+                        <i class="fa-solid fa-print mr-2"></i> Print / Save PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Invoice Form Controls -->
+                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+                    <h3 class="font-bold text-navy-800 pb-2 border-b border-gray-100">Invoice Customization</h3>
+                    
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Student Name</label>
+                        <input type="text" id="invStudentName" value="Rohan Mehta" oninput="updateInvoicePreview()" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">University / Destination</label>
+                        <input type="text" id="invUniversity" value="Kazan Federal University, Russia" oninput="updateInvoicePreview()" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Consultancy Processing Fee (₹)</label>
+                        <input type="number" id="invConsultancyFee" value="75000" oninput="updateInvoicePreview()" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">University First Year Tuition Fee ($ USD)</label>
+                        <input type="number" id="invTuitionUSD" value="4500" oninput="updateInvoicePreview()" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">GST Rate (%)</label>
+                        <select id="invGSTRate" onchange="updateInvoicePreview()" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                            <option value="18">18% GST (Standard)</option>
+                            <option value="0">0% (Exempt)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Printable Invoice Document Preview -->
+                <div class="lg:col-span-2 bg-white p-8 rounded-xl border border-gray-200 shadow-md" id="printableInvoice">
+                    <div class="flex justify-between items-start pb-6 border-b-2 border-navy-800">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 bg-teal-500 rounded flex items-center justify-center font-bold text-white text-lg">
+                                    <i class="fa-solid fa-graduation-cap"></i>
+                                </div>
+                                <span class="text-xl font-bold text-navy-800">AFFINITY EDUCATION</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">Noida Sector 62, Uttar Pradesh, India</p>
+                            <p class="text-xs text-gray-500">GSTIN: 09AAACA1234F1Z5 | Contact: hr@affinityeducation.in</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-teal-600 uppercase tracking-widest bg-teal-50 px-3 py-1 rounded">Official Quotation</span>
+                            <p class="text-sm font-semibold text-gray-800 mt-2">Invoice #: <span id="lblInvoiceNo">INV-2026-941</span></p>
+                            <p class="text-xs text-gray-500">Date: <span id="lblInvoiceDate">19 Oct 2026</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Student Info -->
+                    <div class="my-6 grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase">Billed To Student:</p>
+                            <p class="text-base font-bold text-navy-800" id="lblStudentName">Rohan Mehta</p>
+                            <p class="text-xs text-gray-600 mt-0.5">Destination: <span font-medium text-gray-800 id="lblUniversity">Kazan Federal University, Russia</span></p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-semibold text-gray-500 uppercase">Payment Status:</p>
+                            <span class="inline-block mt-1 px-3 py-1 bg-amber-100 text-amber-800 font-semibold text-xs rounded-full">Pending Enrollment Deposit</span>
+                        </div>
+                    </div>
+
+                    <!-- Line Items Table -->
+                    <table class="w-full text-left my-6">
+                        <thead>
+                            <tr class="border-b border-gray-200 text-xs text-gray-500 uppercase">
+                                <th class="py-2">Description</th>
+                                <th class="py-2 text-right">Amount (INR / USD)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-sm">
+                            <tr>
+                                <td class="py-3">
+                                    <p class="font-semibold text-navy-800">Affinity Overseas Processing & Counseling Services</p>
+                                    <p class="text-xs text-gray-500">Includes documentation, apostille assistance & visa file preparation</p>
+                                </td>
+                                <td class="py-3 text-right font-medium" id="lblConsultancyFee">₹75,000</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3">
+                                    <p class="font-semibold text-navy-800">1st Year Tuition Fee (Estimated Exchange $1 = ₹84)</p>
+                                    <p class="text-xs text-gray-500">Directly payable to university account</p>
+                                </td>
+                                <td class="py-3 text-right font-medium" id="lblTuitionFee">$4,500 (₹3,78,000)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 text-gray-600">Government GST (<span id="lblGSTRate">18</span>% on Service Charge)</td>
+                                <td class="py-3 text-right font-medium" id="lblGSTAmount">₹13,500</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Totals -->
+                    <div class="border-t-2 border-gray-200 pt-4 flex justify-between items-center">
+                        <div class="text-xs text-gray-500">
+                            <p>* Quotation valid for 14 days from issue date.</p>
+                            <p>* Terms & Conditions apply as per student agreement.</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs text-gray-500 font-semibold uppercase">Total Estimated Amount</p>
+                            <p class="text-2xl font-bold text-navy-800" id="lblTotalAmount">₹4,66,500</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: TASK MANAGEMENT -->
+        <section id="section-tasks" class="tab-content space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-navy-800">Counselor SLA & Task Management</h1>
+                    <p class="text-sm text-gray-600">Track operations, visa filings, and student document verification deadlines.</p>
+                </div>
+                <button onclick="addNewTaskPrompt()" class="bg-teal-500 hover:bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition flex items-center self-start">
+                    <i class="fa-solid fa-plus mr-2"></i> Create Task
+                </button>
+            </div>
+
+            <!-- Task List Table -->
+            <div class="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <span class="font-bold text-sm text-navy-800">Pending Tasks (SLA Tracked)</span>
+                    <span class="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded font-semibold" id="taskCountLabel">4 Tasks Active</span>
+                </div>
+                <div class="divide-y divide-gray-100" id="taskListContainer">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-gray-200 mt-auto py-4 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <p>© 2026 Affinity Education CRM Portal. Built for high-conversion overseas education teams.</p>
+            <div class="flex space-x-4">
+                <span class="hover:underline cursor-pointer">Privacy Policy</span>
+                <span class="hover:underline cursor-pointer">Support: hr@affinityeducation.in</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ADD LEAD MODAL -->
+    <div id="leadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4 m-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-navy-800">Add New Student Lead</h3>
+                <button onclick="closeLeadModal()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleCreateLead(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Student Full Name</label>
+                    <input type="text" id="mLeadName" required class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Phone Number</label>
+                        <input type="text" id="mLeadPhone" required placeholder="+91..." class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Target Country</label>
+                        <select id="mLeadCountry" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                            <option value="Russia MBBS">Russia MBBS</option>
+                            <option value="UK Masters">UK Masters</option>
+                            <option value="Georgia Medical">Georgia Medical</option>
+                            <option value="Canada College">Canada College</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Lead Source</label>
+                    <select id="mLeadSource" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                        <option value="Meta Ads">Meta Ads (FB/Insta)</option>
+                        <option value="WhatsApp">WhatsApp Inbound</option>
+                        <option value="Web Form">Website Form</option>
+                    </select>
+                </div>
+                <div class="pt-3 flex justify-end space-x-2 border-t">
+                    <button type="button" onclick="closeLeadModal()" class="px-4 py-2 border rounded-lg text-sm text-gray-600 hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg text-sm font-medium shadow">Save Lead</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA STORE ---
+        let leads = [
+            { id: 1, name: "Aarav Sharma", phone: "+91 98112 34567", destination: "Russia MBBS", source: "Meta Ads", counselor: "Dr. Ananya", status: "Inquiry" },
+            { id: 2, name: "Ananya Gupta", phone: "+91 97123 88901", destination: "UK Masters", source: "WhatsApp", counselor: "Priya Sharma", status: "Counseling" },
+            { id: 3, name: "Karan Patel", phone: "+91 99001 22334", destination: "Georgia Medical", source: "Web Form", counselor: "Vikram Malhotra", status: "Application" },
+            { id: 4, name: "Rohan Mehta", phone: "+91 98765 11223", destination: "Russia MBBS", source: "Meta Ads", counselor: "Dr. Ananya", status: "Docs" },
+            { id: 5, name: "Meera Reddy", phone: "+91 96543 99887", destination: "Canada Undergraduate", source: "WhatsApp", counselor: "Priya Sharma", status: "Visa" },
+            { id: 6, name: "Siddharth Jain", phone: "+91 95432 11009", destination: "Kazakhstan MBBS", source: "Web Form", counselor: "Vikram Malhotra", status: "Enrolled" }
+        ];
+
+        let tasks = [
+            { id: 1, title: "Verify Passport Copies for Rohan Mehta", student: "Rohan Mehta", priority: "High", sla: "3 Hours Remaining", completed: false },
+            { id: 2, title: "Submit UK University Application Portal Fee", student: "Ananya Gupta", priority: "Medium", sla: "1 Day Remaining", completed: false },
+            { id: 3, title: "Send Apostille Checklist on WhatsApp", student: "Aarav Sharma", priority: "Low", sla: "2 Days Remaining", completed: false },
+            { id: 4, title: "Conduct Visa Mock Interview", student: "Meera Reddy", priority: "High", sla: "5 Hours Remaining", completed: true }
+        ];
+
+        // --- NAVIGATION & TABS ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('tab-active'));
+
+            const targetSection = document.getElementById(`section-${tabName}`);
+            if(targetSection) targetSection.classList.remove('hidden');
+
+            const targetNav = document.getElementById(`nav-${tabName}`);
+            if(targetNav) targetNav.classList.add('tab-active');
+
+            if(tabName === 'pipeline') renderKanban();
+            if(tabName === 'leads') renderLeadsTable();
+            if(tabName === 'tasks') renderTasks();
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            switchTab('dashboard');
+            initCharts();
+            renderLeadsTable();
+            renderKanban();
+            renderTasks();
+            updateInvoicePreview();
+        };
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(msg) {
+            const toast = document.getElementById('statusToast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+        }
+        function hideToast() { document.getElementById('statusToast').classList.add('hidden'); }
+
+        // --- CHART JS INIT ---
+        function initCharts() {
+            // Bar Chart
+            const ctx1 = document.getElementById('leadsChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [
+                        { label: 'Inquiries', data: [120, 190, 240, 280, 320, 380], backgroundColor: '#002B49' },
+                        { label: 'Enrolled', data: [30, 45, 60, 75, 90, 110], backgroundColor: '#00A896' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // Doughnut Chart
+            const ctx2 = document.getElementById('destinationChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Russia MBBS', 'UK Universities', 'Georgia', 'Canada', 'Others'],
+                    datasets: [{
+                        data: [40, 25, 15, 12, 8],
+                        backgroundColor: ['#002B49', '#00A896', '#3B82F6', '#8B5CF6', '#CBD5E1']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // --- LEADS MODULE LOGIC ---
+        function renderLeadsTable() {
+            const tbody = document.getElementById('leadsTableBody');
+            const search = document.getElementById('leadSearchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('leadStatusFilter').value;
+            const sourceFilter = document.getElementById('leadSourceFilter').value;
+
+            tbody.innerHTML = '';
+
+            const filtered = leads.filter(l => {
+                const matchSearch = l.name.toLowerCase().includes(search) || l.destination.toLowerCase().includes(search);
+                const matchStatus = statusFilter === 'ALL' || l.status === statusFilter;
+                const matchSource = sourceFilter === 'ALL' || l.source === sourceFilter;
+                return matchSearch && matchStatus && matchSource;
+            });
+
+            filtered.forEach(lead => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition border-b border-gray-100";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-semibold text-navy-800">${lead.name}</td>
+                    <td class="py-3 px-4 text-xs text-gray-600">${lead.phone}</td>
+                    <td class="py-3 px-4"><span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded font-medium">${lead.destination}</span></td>
+                    <td class="py-3 px-4">
+                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${
+                            lead.source === 'Meta Ads' ? 'bg-blue-100 text-blue-800' :
+                            lead.source === 'WhatsApp' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-800'
+                        }">${lead.source}</span>
+                    </td>
+                    <td class="py-3 px-4 text-xs font-medium text-gray-700">${lead.counselor}</td>
+                    <td class="py-3 px-4">
+                        <span class="text-xs px-2 py-0.5 rounded font-bold ${
+                            lead.status === 'Enrolled' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }">${lead.status}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="deleteLead(${lead.id})" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterLeadsTable() { renderLeadsTable(); }
+
+        function openLeadModal() { document.getElementById('leadModal').classList.remove('hidden'); }
+        function closeLeadModal() { document.getElementById('leadModal').classList.add('hidden'); }
+
+        function handleCreateLead(e) {
+            e.preventDefault();
+            const newLead = {
+                id: Date.now(),
+                name: document.getElementById('mLeadName').value,
+                phone: document.getElementById('mLeadPhone').value,
+                destination: document.getElementById('mLeadCountry').value,
+                source: document.getElementById('mLeadSource').value,
+                counselor: "Priya Sharma",
+                status: "Inquiry"
+            };
+            leads.unshift(newLead);
+            closeLeadModal();
+            renderLeadsTable();
+            showToast(`New Lead '${newLead.name}' saved and added to pipeline!`);
+        }
+
+        function deleteLead(id) {
+            leads = leads.filter(l => l.id !== id);
+            renderLeadsTable();
+            showToast("Lead removed from database.");
+        }
+
+        // --- KANBAN PIPELINE LOGIC ---
+        const pipelineStages = [
+            { key: 'Inquiry', label: 'col-Inquiry', countId: 'count-inquiry' },
+            { key: 'Counseling', label: 'col-Counseling', countId: 'count-counseling' },
+            { key: 'Application', label: 'col-Application', countId: 'count-application' },
+            { key: 'Docs', label: 'col-Docs', countId: 'count-docs' },
+            { key: 'Visa', label: 'col-Visa', countId: 'count-visa' },
+            { key: 'Enrolled', label: 'col-Enrolled', countId: 'count-enrolled' }
+        ];
+
+        function renderKanban() {
+            pipelineStages.forEach(stage => {
+                const colEl = document.getElementById(stage.label);
+                if(!colEl) return;
+                colEl.innerHTML = '';
+
+                const stageLeads = leads.filter(l => l.status === stage.key);
+                document.getElementById(stage.countId).innerText = stageLeads.length;
+
+                stageLeads.forEach(lead => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white p-3.5 rounded-lg border border-gray-200 shadow-sm hover:shadow transition space-y-2 cursor-pointer";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <h4 class="font-bold text-sm text-navy-800 leading-tight">${lead.name}</h4>
+                            <span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">${lead.source}</span>
+                        </div>
+                        <p class="text-xs text-teal-600 font-semibold">${lead.destination}</p>
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-100 text-[11px] text-gray-500">
+                            <span><i class="fa-solid fa-user-tie mr-1"></i>${lead.counselor}</span>
+                            <div class="space-x-1">
+                                ${stage.key !== 'Enrolled' ? `<button onclick="moveLeadStatus(${lead.id}, '${getNextStage(stage.key)}')" class="hover:text-teal-600 font-bold" title="Move Next"><i class="fa-solid fa-circle-chevron-right"></i></button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    colEl.appendChild(card);
+                });
+            });
+        }
+
+        function getNextStage(current) {
+            const keys = pipelineStages.map(s => s.key);
+            const idx = keys.indexOf(current);
+            return idx < keys.length - 1 ? keys[idx + 1] : current;
+        }
+
+        function moveLeadStatus(leadId, nextStatus) {
+            const lead = leads.find(l => l.id === leadId);
+            if(lead) {
+                lead.status = nextStatus;
+                renderKanban();
+                showToast(`Moved ${lead.name} to ${nextStatus} stage.`);
+            }
+        }
+
+        // --- AGENTIC AI SIMULATION ---
+        function runAgenticSimulation(e) {
+            e.preventDefault();
+            const name = document.getElementById('aiStudentName').value;
+            const dest = document.getElementById('aiStudentDestination').value;
+            const channel = document.getElementById('aiStudentChannel').value;
+            const logBox = document.getElementById('aiLogOutput');
+
+            logBox.innerHTML = `<p class="text-teal-300">[${new Date().toLocaleTimeString()}] INGESTING NEW LEAD: ${name} (${dest})...</p>`;
+
+            setTimeout(() => {
+                logBox.innerHTML += `<p class="text-white">[AI AGENT EVAL] Analyzing source: ${channel}. Assigning sentiment score: HIGH INCLINATION.</p>`;
+            }, 600);
+
+            setTimeout(() => {
+                let counselor = "Dr. Ananya (Russia Lead)";
+                if(dest.includes("UK")) counselor = "Priya Sharma (UK Lead)";
+                if(dest.includes("Canada")) counselor = "Vikram Malhotra (North America)";
+
+                logBox.innerHTML += `<p class="text-yellow-300">[AI ROUTER MATCH] Lead auto-assigned to Specialist: <span class="underline">${counselor}</span>.</p>`;
+            }, 1200);
+
+            setTimeout(() => {
+                logBox.innerHTML += `<p class="text-emerald-400">[AUTOMATION TRIGGERED] WhatsApp API sent brochure & quotation template to lead.</p>`;
+                logBox.innerHTML += `<p class="text-gray-400">// Workflow executed in 1.4 seconds with zero manual intervention.</p>`;
+                
+                // Add to main state
+                leads.unshift({
+                    id: Date.now(),
+                    name: name,
+                    phone: document.getElementById('aiStudentPhone').value,
+                    destination: dest,
+                    source: channel,
+                    counselor: "Dr. Ananya",
+                    status: "Inquiry"
+                });
+
+                showToast(`Agentic AI successfully processed lead for ${name}!`);
+            }, 1800);
+        }
+
+        // --- INVOICE GENERATOR LOGIC ---
+        function updateInvoicePreview() {
+            const name = document.getElementById('invStudentName').value || "Student Name";
+            const uni = document.getElementById('invUniversity').value || "University";
+            const fee = parseFloat(document.getElementById('invConsultancyFee').value) || 0;
+            const usd = parseFloat(document.getElementById('invTuitionUSD').value) || 0;
+            const gstRate = parseFloat(document.getElementById('invGSTRate').value) || 0;
+
+            const usdInINR = usd * 84;
+            const gstAmount = (fee * gstRate) / 100;
+            const total = fee + usdInINR + gstAmount;
+
+            document.getElementById('lblStudentName').innerText = name;
+            document.getElementById('lblUniversity').innerText = uni;
+            document.getElementById('lblConsultancyFee').innerText = `₹${fee.toLocaleString('en-IN')}`;
+            document.getElementById('lblTuitionFee').innerText = `$${usd.toLocaleString()} (₹${usdInINR.toLocaleString('en-IN')})`;
+            document.getElementById('lblGSTRate').innerText = gstRate;
+            document.getElementById('lblGSTAmount').innerText = `₹${gstAmount.toLocaleString('en-IN')}`;
+            document.getElementById('lblTotalAmount').innerText = `₹${total.toLocaleString('en-IN')}`;
+        }
+
+        // --- TASKS MODULE LOGIC ---
+        function renderTasks() {
+            const container = document.getElementById('taskListContainer');
+            if(!container) return;
+            container.innerHTML = '';
+
+            document.getElementById('taskCountLabel').innerText = `${tasks.filter(t => !t.completed).length} Tasks Pending`;
+
+            tasks.forEach(task => {
+                const div = document.createElement('div');
+                div.className = `p-4 flex items-center justify-between hover:bg-gray-50 transition ${task.completed ? 'opacity-50 line-through' : ''}`;
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" class="h-4 w-4 text-teal-600 rounded border-gray-300 focus:ring-teal-500">
+                        <div>
+                            <p class="text-sm font-semibold text-navy-800">${task.title}</p>
+                            <p class="text-xs text-gray-500">Student: ${task.student}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 text-xs">
+                        <span class="px-2 py-1 rounded font-semibold ${
+                            task.priority === 'High' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                        }">${task.priority} Priority</span>
+                        <span class="text-gray-500"><i class="fa-regular fa-clock mr-1"></i>${task.sla}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleTask(id) {
+            const t = tasks.find(x => x.id === id);
+            if(t) {
+                t.completed = !t.completed;
+                renderTasks();
+            }
+        }
+
+        function addNewTaskPrompt() {
+            const title = prompt("Enter Task Title:");
+            if(title) {
+                tasks.unshift({
+                    id: Date.now(),
+                    title: title,
+                    student: "General Task",
+                    priority: "High",
+                    sla: "24 Hours Remaining",
+                    completed: false
+                });
+                renderTasks();
+                showToast("Task added to SLA queue.");
+            }
+        }
+    </script>
+</body>
+</html>
